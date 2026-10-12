@@ -71,7 +71,7 @@ button{font:inherit;color:inherit}
 #b-full,#b-view{display:none}
 .vw{display:contents}
 .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
-.start{align-self:flex-start;padding:10px 18px;font-size:15px}
+.start{display:block;margin-top:14px;padding:10px 18px;font-size:15px}
 .again{align-self:flex-start}
 .tg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
 .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -148,6 +148,7 @@ figcaption{font-size:12.5px;color:var(--muted)}
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(250px,48%) minmax(0,1fr)}
   .panel{border-left:0;border-top:1px solid var(--line);padding:16px 16px 24px;gap:14px}
   h1{font-size:23px}
+  .btn.start{width:100%;padding:13px 18px;font-size:16px}
   .hint{font-size:12px;top:10px;left:10px;right:96px}
   .hint span{padding:5px 9px}
   .corner{top:10px;right:10px}
@@ -214,6 +215,7 @@ figcaption{font-size:12.5px;color:var(--muted)}
     <header>
       <p class="eyebrow">Neustadt O.-S. · w ruchu 1896–1996</p>
       <h1>Stara oczyszczalnia w Prudniku</h1>
+      <button type="button" class="btn primary start" id="startbtn">Rozpocznij zwiedzanie</button>
     </header>
     <nav class="stepper" aria-label="Przystanki spaceru">
       <button type="button" id="prev">Wstecz</button>
@@ -1518,14 +1520,14 @@ function renderStop(){
   const pins=PINS[cur]||[];
   const de=pins.length?`<div class="here"><p class="lgh">Co tu jest. Kliknij pozycję albo znacznik w modelu.</p><ul class="pinlist">${pins.map(k=>`<li><button type="button" class="pinb" data-go="${k}"><span class="k">${LEG[k]?k:'•'}</span><span>${nameOf(k)[1]}</span></button></li>`).join('')}</ul></div>`:'';
   const st=STORY[cur]||[s.t,s.txt];
-  el.innerHTML=`<p class="name">${s.t}</p><h2>${st[0]}</h2><p class="txt">${st[1]}</p>${cur===0?'<button type="button" class="btn primary start" id="startbtn">Rozpocznij zwiedzanie</button>':''}${cur===STOPS.length-1?'<button type="button" class="btn again" id="againbtn">Wróć na początek</button>':''}
+  el.innerHTML=`<p class="name">${s.t}</p><h2>${st[0]}</h2><p class="txt">${st[1]}</p>${cur===STOPS.length-1?'<button type="button" class="btn again" id="againbtn">Wróć na początek</button>':''}
     ${de}
     <figure><button type="button" class="figbtn" id="figbtn" aria-label="Powiększ: ${s.cap}"><img src="${IMG[s.img]||''}" alt="${s.cap}"></button><figcaption>${s.cap}. Kliknij, aby powiększyć.</figcaption></figure>
     <details class="more" id="more"${moreOpen?' open':''}><summary>Dla dociekliwych</summary><div class="morein"><p class="txt">${s.txt}</p>
     <dl class="facts">${s.facts.map(f=>`<dt>${f[0]}</dt><dd>${f[1]}</dd>`).join('')}</dl>${s.img2?`<figure><button type="button" class="figbtn" id="fig2btn" aria-label="Powiększ: ${s.cap2}"><img src="${IMG[s.img2]||''}" alt="${s.cap2}"></button><figcaption>${s.cap2}. Kliknij, aby powiększyć.</figcaption></figure>`:''}</div></details>`;
   if($('fig2btn'))$('fig2btn').onclick=()=>openLb(s.img2,s.cap2);
   $('more').addEventListener('toggle',e=>{moreOpen=e.target.open;});
-  if($('startbtn'))$('startbtn').onclick=()=>setStop(1);if($('againbtn'))$('againbtn').onclick=()=>setStop(0);
+  $('startbtn').hidden=cur!==0;if($('againbtn'))$('againbtn').onclick=()=>setStop(0);
   $('figbtn').onclick=()=>openLb(s.img,s.cap);
   $('count').textContent=`Przystanek ${cur+1} z ${STOPS.length}`;
   $('prev').disabled=cur===0; $('next').disabled=cur===STOPS.length-1;
@@ -1540,6 +1542,7 @@ const TG=[['t-roof','Zdejmij dach','Załóż dach',true],['t-water','Ukryj wodę
 function syncTg(){TG.forEach(([id,a,b,def])=>{const i=$(id);i.nextElementSibling.textContent=i.checked?a:b;i.parentElement.classList.toggle('alt',i.checked!==def);});}
 document.addEventListener('change',e=>{if(e.target.closest&&e.target.closest('.tools'))syncTg();});syncTg();
 $('b-reset').onclick=()=>setStop(cur);
+$('startbtn').onclick=()=>setStop(1);
 $('b-view').onclick=e=>{e.stopPropagation();const o=$('tools').classList.toggle('open');$('b-view').setAttribute('aria-expanded',o?'true':'false');};
 document.addEventListener('pointerdown',e=>{if(!$('tools').contains(e.target)){$('tools').classList.remove('open');$('b-view').setAttribute('aria-expanded','false');}});
 $('b-full').onclick=()=>{const f=document.querySelector('.app').classList.toggle('full');$('b-full').setAttribute('aria-pressed',f?'true':'false');$('b-full').querySelector('.ic').textContent=f?'⤡':'⤢';$('b-full').setAttribute('aria-label',f?'Pokaż opis':'Pełny ekran');};
