@@ -21,7 +21,6 @@ Strona pokazuje ten zakład jako model trójwymiarowy, po którym można się po
 ## Źródła
 
 - E. Ritzel, *Die Wasserversorgung und die Entwässerung der Stadt Neustadt in Oberschlesien*, 1900. Tablica „Kläranlage” (ark. II i III) oraz plan sytuacyjny w skali 1:1000, wyd. Wilhelm Ernst u. Sohn, Berlin.
-- H. Mairich, plany techniczne oczyszczalni z 1895 r. Oryginały: Muzeum Ziemi Prudnickiej, sygn. MPZP/2234/1–3.
 - Karta ewidencyjna zabytku „Zespół oczyszczalni ścieków”, Prudnik, ul. Łucznicza, oprac. J. Sawiński, PDZ ALMA, 2009.
 - B. Günther, *Denkschrift*, Neustadt O/S 1925.
 - P. J. Kawecki, S. Waszczykowski, *Miejska oczyszczalnia ścieków w Prudniku wczoraj i dziś*, opracowanie wewnętrzne ZWiK Prudnik.
