@@ -66,13 +66,16 @@ button{font:inherit;color:inherit}
 .tg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .tg span,.btn{display:inline-block;padding:6px 11px;border:1px solid var(--line);border-radius:3px;background:var(--panel);font-size:13px;line-height:1.2;cursor:pointer;user-select:none}
 .tg.alt span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.reset{position:absolute;top:12px;right:16px}
+.corner{position:absolute;top:12px;right:16px;display:flex;gap:6px}
+.corner .ic{display:none}
+#b-full,#b-view{display:none}
+.vw{display:contents}
 .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
 .start{align-self:flex-start;padding:10px 18px;font-size:15px}
 .again{align-self:flex-start}
 .tg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
 .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.tools .btn{margin-left:auto}
+#b-walk{margin-left:auto}
 
 .pad{position:absolute;right:16px;bottom:58px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:4px}
 .pad button{border:1px solid var(--line);border-radius:3px;background:var(--panel);font-size:18px;line-height:1;cursor:pointer;touch-action:none;user-select:none}
@@ -145,15 +148,34 @@ figcaption{font-size:12.5px;color:var(--muted)}
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(250px,48%) minmax(0,1fr)}
   .panel{border-left:0;border-top:1px solid var(--line);padding:16px 16px 24px;gap:14px}
   h1{font-size:23px}
-  .hint{font-size:12px;right:140px}
+  .hint{font-size:12px;top:10px;left:10px;right:96px}
+  .hint span{padding:5px 9px}
+  .corner{top:10px;right:10px}
+  .corner .ic{display:inline;font-size:17px;line-height:1}.corner .tx{display:none}
+  .corner .btn{padding:6px 10px;min-width:40px}
+  #b-full{display:inline-block}
+  #b-view{display:inline-block}
+  .tools{left:10px;right:10px}
+  .vw{display:none;position:absolute;left:0;bottom:calc(100% + 6px);flex-direction:column;align-items:stretch;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:8px;box-shadow:0 2px 10px rgba(10,25,32,.18)}
+  .tools.open .vw{display:flex}
+  .vw .tg span{display:block;min-width:130px;padding:9px 12px;font-size:14px}
+  .tools .btn{padding:8px 12px;font-size:13.5px}
+  .card{top:56px;left:10px;width:calc(100% - 20px);max-height:calc(100% - 120px)}
   .tg span,.btn{font-size:12.5px;padding:6px 9px}
   .tools{bottom:10px}
   .lightbox img{width:max(100%,900px)}
 }
+@media (max-width:820px) and (orientation:landscape) and (max-height:560px){
+  .app{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,60fr) minmax(0,40fr)}
+  .panel{border-top:0;border-left:1px solid var(--line);padding:12px 14px 20px}
+  h1{font-size:19px}
+  .card{max-height:calc(100% - 110px)}
+}
+@media (max-width:820px), (orientation:landscape) and (max-height:560px){
+  .app.full{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  .app.full .panel{display:none}
+}
 </style>
-</head>
-<body>
-
 
 <div class="app">
   <section class="stage" id="stage" aria-label="Model trójwymiarowy oczyszczalni">
@@ -166,12 +188,18 @@ figcaption{font-size:12.5px;color:var(--muted)}
       <p class="card-g" id="card-g" hidden>Funkcja wywnioskowana z rysunku i nazwy, do sprawdzenia.</p>
     </div>
     <p class="hint" id="hintp"><span id="hint">Przeciągnij, aby się rozejrzeć.</span></p>
-    <button type="button" class="btn reset" id="b-reset">Wróć do widoku</button>
-    <div class="tools">
+    <div class="corner">
+      <button type="button" class="btn" id="b-full" aria-pressed="false" aria-label="Pełny ekran"><span class="ic">⤢</span><span class="tx">Pełny ekran</span></button>
+      <button type="button" class="btn" id="b-reset" aria-label="Wróć do widoku"><span class="ic">↺</span><span class="tx">Wróć do widoku</span></button>
+    </div>
+    <div class="tools" id="tools">
+      <button type="button" class="btn" id="b-view" aria-expanded="false" aria-controls="vw">Widok ▾</button>
+      <div class="vw" id="vw">
       <label class="tg"><input type="checkbox" id="t-roof" checked><span>Dach</span></label>
       <label class="tg"><input type="checkbox" id="t-water" checked><span>Woda</span></label>
       <label class="tg"><input type="checkbox" id="t-labels" checked><span>Oznaczenia</span></label>
       <label class="tg"><input type="checkbox" id="t-under"><span>Podziemie</span></label>
+      </div>
       <button type="button" class="btn" id="b-walk" aria-pressed="false">Idź pieszo</button>
     </div>
     <div class="pad" id="pad" hidden>
@@ -238,7 +266,7 @@ figcaption{font-size:12.5px;color:var(--muted)}
         <li>Płuczki żwiru: plan sytuacyjny ma ten napis obok maszynowni, ale bez żadnych szczegółów.</li>
       </ul>
     </details>
-    <p class="src">Rysunek: tablica „Wasserversorgung und Entwässerung von Neustadt (Oberschlesien). Kläranlage”, ark. II i III, oraz plan sytuacyjny (Abb. 5), Wilhelm Ernst u. Sohn, Berlin. Nazwy niemieckie pochodzą z legendy arkusza, polskie z jej tłumaczenia. Opisy przystanków według opisu technologicznego oczyszczalni (źródła: E. Ritzel, 1900; B. Günther, 1925; P. J. Kawecki, S. Waszczykowski, ZWiK Prudnik). Elewacje według planów H. Mairicha z 1895 r. reprodukowanych w karcie ewidencyjnej zabytku „Zespół oczyszczalni ścieków” (J. Sawiński, PDZ ALMA, 2009). Oryginały planów: Muzeum Ziemi Prudnickiej, sygn. MPZP/2234/1–3.</p>
+    <p class="src">Rysunek: tablica „Wasserversorgung und Entwässerung von Neustadt (Oberschlesien). Kläranlage”, ark. II i III, oraz plan sytuacyjny (Abb. 5), Wilhelm Ernst u. Sohn, Berlin. Nazwy niemieckie pochodzą z legendy arkusza, polskie z jej tłumaczenia. Opisy przystanków według opisu technologicznego oczyszczalni (źródła: E. Ritzel, 1900; B. Günther, 1925; P. J. Kawecki, S. Waszczykowski, ZWiK Prudnik). Elewacje według planów H. Mairicha z 1895 r. reprodukowanych w karcie ewidencyjnej zabytku „Zespół oczyszczalni ścieków” (J. Sawiński, PDZ ALMA, 2009).</p>
   </aside>
 </div>
 
@@ -1335,7 +1363,7 @@ const STOPS=[
   txt:'Oczyszczone ścieki z filtrów zbierają się w dwóch komorach i płyną rurami 350 mm do ośmiobocznej komory regulacji piętrzenia, a stamtąd rurą 400 mm do Młynówki. Osobny przewód 250 mm służy do opróżniania filtrów.',
   facts:[['Wylot do Młynówki','+248,700'],['Woda w Młynówce','+248,400'],['Dno Młynówki','+248,000']]},
  {g:'Zaplecze',t:'Maszynownia',pos:[-13.5,1.75,19.5],tgt:[2.8,3.1,.6],roof:true,img:'foto',cap:'Zdjęcie zachowanego budynku, to samo ujęcie',
-  img2:'elew',cap2:'Elewacja od strony studni, plan H. Mairicha z 1895 r. (reprodukcja z karty zabytku; oryginał w Muzeum Ziemi Prudnickiej)',
+  img2:'elew',cap2:'Elewacja od strony studni, plan H. Mairicha z 1895 r. (reprodukcja z karty zabytku)',
   txt:'Ceglany, neogotycki budynek z dachem dwuspadowym, wydłużony na osi pd.-wsch. – pn.-zach. Szczyt od pd.-wsch. ma trzy osie. Ściana od strony studni ma cztery okna i pośrodku niski aneks o ściętych narożnikach, ściana przeciwna siedem osi z drzwiami. Pod oknami są płyciny i dwa rzędy kroksztynów. W pn.-zach. części stoi lokomobila (23) i dmuchawa (37), pośrodku komora pomp i izba nadzorcy (G). Rombowy wzór pokrycia pochodzi z rysunku elewacji z 1895 r. Dach hali wymieniono w latach 80., więc pokrycie widoczne na zdjęciu nie jest pierwotne.',
   facts:[['Wymiary w planie','8,80 × 14,25 m'],['Wysokość ścian od posadzki','4,10 m'],['Wysokość dachu','2,70 m'],['Rzędna posadzki','+250,960'],['Moc lokomobili','6–8 KM']]},
  {g:'Zaplecze',t:'Wapno',pos:[2.2,16,9.2],tgt:[2.5,.6,4.4],roof:false,img:'cd',cap:'Abb. 10 i 11, przekroje a–b i c–d przez budynek',
@@ -1482,7 +1510,7 @@ const STORY=[
 let moreOpen=false;
 
 /* ---------- interfejs ---------- */
-const $=id=>document.getElementById(id);
+const COARSE=matchMedia('(pointer: coarse)').matches;const $=id=>document.getElementById(id);
 let cur=0, goTo=()=>{}, goLoc=()=>{}, setPins=()=>{};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;if(b.dataset.go==='ALL')setStop(0);else pick(b.dataset.go);});
 function renderStop(){
@@ -1512,6 +1540,9 @@ const TG=[['t-roof','Zdejmij dach','Załóż dach',true],['t-water','Ukryj wodę
 function syncTg(){TG.forEach(([id,a,b,def])=>{const i=$(id);i.nextElementSibling.textContent=i.checked?a:b;i.parentElement.classList.toggle('alt',i.checked!==def);});}
 document.addEventListener('change',e=>{if(e.target.closest&&e.target.closest('.tools'))syncTg();});syncTg();
 $('b-reset').onclick=()=>setStop(cur);
+$('b-view').onclick=e=>{e.stopPropagation();const o=$('tools').classList.toggle('open');$('b-view').setAttribute('aria-expanded',o?'true':'false');};
+document.addEventListener('pointerdown',e=>{if(!$('tools').contains(e.target)){$('tools').classList.remove('open');$('b-view').setAttribute('aria-expanded','false');}});
+$('b-full').onclick=()=>{const f=document.querySelector('.app').classList.toggle('full');$('b-full').setAttribute('aria-pressed',f?'true':'false');$('b-full').querySelector('.ic').textContent=f?'⤡':'⤢';$('b-full').setAttribute('aria-label',f?'Pokaż opis':'Pełny ekran');};
 function closeLb(){ $('lb').hidden=true; }
 $('lb-close').onclick=closeLb;$('card-x').onclick=hideCard; $('lb').addEventListener('click',e=>{if(e.target===$('lb'))closeLb();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('lb').hidden)closeLb();});
@@ -1615,7 +1646,7 @@ function label(txt,x,y,z,inside,key){const wide=txt.length>2;const c=document.cr
   if(wide){const r=30;g.beginPath();g.moveTo(r+4,18);g.arcTo(252,18,252,78,r);g.arcTo(252,78,4,78,r);g.arcTo(4,78,4,18,r);g.arcTo(4,18,252,18,r);g.closePath();}else{g.beginPath();g.arc(48,48,40,0,7);}
   g.fill();g.stroke();g.fillStyle='#1d2b33';g.textAlign='center';g.textBaseline='middle';g.font=(wide?'italic 600 36px ':'600 52px ')+'Georgia,serif';g.fillText(txt,c.width/2,wide?49:51);
   const s=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false,sizeAttenuation:false,transparent:true}));
-  s.scale.set(wide?.094:.035,.035,1);s.position.set(x,y,z);s.renderOrder=10;if(key)s.userData.key=key;(inside?G.inlab:G.labels).add(s);return s;}
+  const SZ=COARSE?1.45:1;s.scale.set((wide?.094:.035)*SZ,.035*SZ,1);s.position.set(x,y,z);s.renderOrder=10;if(key)s.userData.key=key;(inside?G.inlab:G.labels).add(s);return s;}
 
 /* ====== geometria: 1 jednostka = 1 m; X na prawo arkusza, Z w dół arkusza; Y=0 to teren +250,35 ====== */
 const FL=0.61;                      // posadzka +250,96
@@ -1923,20 +1954,20 @@ function mark(key,x,y,z){while(G.mark.children.length){const o=G.mark.children[0
   if(key===null)return;const txt=String(key).length<=2&&!/^[A-Z]{2}$/.test(key)?String(key):'';const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
   g.beginPath();g.arc(64,64,54,0,7);g.fillStyle='#1c5878';g.fill();g.lineWidth=9;g.strokeStyle='#ffffff';g.stroke();
   if(txt){g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.font='600 '+(txt.length>1?58:66)+'px Georgia,serif';g.fillText(txt,64,68);}else{g.beginPath();g.arc(64,64,16,0,7);g.fillStyle='#fff';g.fill();}
-  const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false,sizeAttenuation:false,transparent:true}));sp.scale.set(.062,.062,1);sp.position.set(x,y+.35,z);sp.renderOrder=20;G.mark.add(sp);}
+  const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false,sizeAttenuation:false,transparent:true}));sp.scale.set(.062*(COARSE?1.5:1),.062*(COARSE?1.5:1),1);sp.position.set(x,y+.35,z);sp.renderOrder=20;G.mark.add(sp);}
 G.pins=new T.Group();scene.add(G.pins);const LABKEY={MG:1,SZ:1,WH:1};
 setPins=function(keys){while(G.pins.children.length){const o=G.pins.children[0];G.pins.remove(o);o.material.map.dispose();o.material.dispose();}
   (keys||[]).forEach(k=>{const L=LOC[k];if(!L||LABKEY[k])return;const txt=LEG[k]?String(k):'',c=document.createElement('canvas');c.width=c.height=96;const g=c.getContext('2d');
     g.beginPath();g.arc(48,48,39,0,7);g.fillStyle='#f6f1e2';g.fill();g.lineWidth=7;g.strokeStyle='#1c5878';g.stroke();g.fillStyle='#1c5878';
     if(txt){g.textAlign='center';g.textBaseline='middle';g.font='600 '+(txt.length>1?42:50)+'px Georgia,serif';g.fillText(txt,48,51);}else{g.beginPath();g.arc(48,48,12,0,7);g.fill();}
-    const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false,sizeAttenuation:false,transparent:true}));sp.scale.set(.046,.046,1);sp.position.set(L[0],L[1]+.35,L[2]);sp.renderOrder=12;sp.userData.key=k;G.pins.add(sp);});};
+    const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false,sizeAttenuation:false,transparent:true}));const PZ=COARSE?1.5:1;sp.scale.set(.046*PZ,.046*PZ,1);sp.position.set(L[0],L[1]+.35,L[2]);sp.renderOrder=12;sp.userData.key=k;G.pins.add(sp);});};
 const ray=new T.Raycaster(),mp=new T.Vector2();let down=null;
 function hitKey(e){const r=canvas.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,camera);
   const list=[];if(G.pins.visible)list.push(...G.pins.children);if(G.labels.visible)list.push(...G.labels.children.filter(o=>o.userData.key));const h=ray.intersectObjects(list,false);return h.length?h[0].object.userData.key:null;}
 canvas.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];});
 canvas.addEventListener('pointerup',e=>{if(walk||!down)return;const d=Math.hypot(e.clientX-down[0],e.clientY-down[1]);down=null;if(d>6)return;const k=hitKey(e);if(k)pick(k);});
 canvas.addEventListener('pointermove',e=>{if(walk||e.buttons)return;canvas.style.cursor=hitKey(e)?'pointer':'';});
-const HINT=matchMedia('(pointer: coarse)').matches?'Przesuń palcem, aby się rozejrzeć. Dwa palce przybliżają i przesuwają.':'Przeciągnij myszą, aby się rozejrzeć. Kółko przybliża.';let hintDone=false;
+const HINT=COARSE?'Palcem obracasz, dwoma przybliżasz.':'Przeciągnij myszą, aby się rozejrzeć. Kółko przybliża.';let hintDone=false;
 const controls=new T.OrbitControls(camera,canvas);
 controls.addEventListener('start',()=>{if(!walk){hintDone=true;$('hintp').classList.add('gone');}});controls.enableDamping=true;controls.dampingFactor=.09;controls.minDistance=2;controls.maxDistance=280;controls.maxPolarAngle=Math.PI/2-.02;controls.screenSpacePanning=false;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1984,7 +2015,15 @@ function frame(){const raw=clock.getDelta(),dt=Math.min(.05,raw);
     camera.position.x=Math.max(-230,Math.min(70,camera.position.x));camera.position.z=Math.max(-95,Math.min(95,camera.position.z));
     const ty=(inB(camera.position.x,camera.position.z)?FL:0)+1.7;camera.position.y+=(ty-camera.position.y)*Math.min(1,dt*8);camera.rotation.set(pitch,yaw,0);}
   else controls.update();
-  renderer.render(scene,camera);requestAnimationFrame(frame);}
+  declutter();renderer.render(scene,camera);requestAnimationFrame(frame);}
+const _v=new T.Vector3();
+function declutter(){if(!G.pins||!G.pins.visible)return;const P=G.pins.children,n=P.length;if(!n)return;
+  const H=renderer.domElement.clientHeight,W=renderer.domElement.clientWidth,pts=[];
+  for(const s of P){s.center.set(.5,.5);_v.copy(s.position).project(camera);const size=s.scale.y*camera.projectionMatrix.elements[5]*H/2;pts.push({x:_v.x*W/2,y:_v.y*H/2,dx:0,dy:0,size,ok:_v.z<1});}
+  for(let it=0;it<3;it++)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=pts[i],b=pts[j];if(!a.ok||!b.ok)continue;
+    let ex=(b.x+b.dx)-(a.x+a.dx),ey=(b.y+b.dy)-(a.y+a.dy),d=Math.hypot(ex,ey),m=Math.min(a.size,b.size)*.92;
+    if(d<m){if(d<.01){ex=1;ey=0;d=1;}const k=(m-d)/2/d;a.dx-=ex*k;a.dy-=ey*k;b.dx+=ex*k;b.dy+=ey*k;}}
+  P.forEach((s,i)=>{const p=pts[i];if(p.dx||p.dy)s.center.set(.5-p.dx/p.size,.5-p.dy/p.size);});}
 goTo(0,true);frame();
 })();
 </script>
